@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <script src="js/modal.js"></script>
+
+    <title>Persona 3</title>
+
+    <script src="./js/sessao.js"></script>
+
+    <link rel="icon" href="./assets/persona3-logo.png" />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <ul class="navbar">
+          <img src="assets/persona3-logo.png" class="logo" />
+          <li>
+            <h3>
+              <a href="persona.html">Persona</a>
+            </h3>
+          </li>
+
+          <li>
+            <h3>
+              <a href="smt.html">SMT</a>
+            </h3>
+          </li>
+        </ul>
+        <ul class="navbar">
+          <li>
+            <h3>
+              <a href="sobre.html">Sobre Mim</a>
+            </h3>
+          </li>
+          <li>
+            <h3 id="btnModalEntrar">Entrar</h3>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div class="container">
+        <img src="assets/Persona_3_Logo.png" id="persona3-logo-banner" />
+        <img src="assets/makoto_faceless.png" id="makoto-faceless" alt="" />
+      </div>
+      <div class="text-area">
+        <p>
+          Shin Megami Tensei: Persona 3 é um JRPG lançado em 2006, originalmente
+          para Playstation 2, e é o quarto jogo principal da série Persona.
+        </p>
+      </div>
+      <div class="text-area">
+        <h1>Sinopse</h1>
+        <p>
+          Persona 3 retrata um grupo de estudantes do ensino médio tentando
+          encontrar suas próprias razões para viver em um mundo rodeado por
+          morte em que são obrigados a entender, lidar e aceitar. Eles formam um
+          grupo chamado SEES para investigar a Dark Hour, um período de tempo
+          misterioso que acontece entre um dia e outro. Durante a Dark Hour, a
+          SEES explora o Tartarus, uma torre gigante contendo Shadows, criaturas
+          que se alimentam das mentes das pessoas. Para lutar com as Shadows, os
+          membros da SEES conseguem invocar Personas, a manifestação do seu eu
+          interior.
+        </p>
+        <div class="slide"></div>
+      </div>
+      <div class="text-area">
+        <h1>Gameplay</h1>
+        <p>
+          Assim como os Persona anteriores, Persona 3 mistura elementos de
+          Dungeon Crawler (exploração de masmorras) e combate por turno com a
+          vida escolar do protagonista.
+        </p>
+        <p>O dia é dividido em Manhã, Tarde e Noite.</p>
+        <p>
+          Durante a manhã o protagonista vai à escola, e à tarde fica livre para
+          escolher atividades, principalmente sair com outros personagens, e
+          desenvolver seus Social Links (nível de relacionamento), que são
+          importantes para fortalecer seus Personas.
+        </p>
+        <div class="slide"></div>
+        <p>
+          Durante a noite, o protagonista e seus colegas, com o poder de seus
+          Personas, devem enfrentar Shadows no Tartarus, uma torre imensa que
+          surge durante a Dark Hour, ou então, pode decidir descansar caso a
+          equipe esteja cansada.
+        </p>
+        <div class="slide"></div>
+        <p>
+          Explorando o Tartarus é possível encontrar itens e Shadows. Para
+          prosseguir no jogo, é necessário derrotar as Shadows guardiãs de cada
+          um dos 6 blocos da torre.
+        </p>
+        <p>
+          O combate é por turno, e intercala entre o protagonista e seus
+          colegas, que podem atacar com suas armas ou suas Personas.
+        </p>
+        <div class="slide"></div>
+      </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="modalEntrar" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h1>Entre ou cadastre-se</h1>
+        <div class="input-area">
+          <p>Email</p>
+          <input type="text" id="iptEmailLogin" />
+          <p>Senha</p>
+          <input type="password" id="iptSenhaLogin" />
+        </div>
+        <div class="btn-area">
+          <button onclick="entrar()">Log-in</button>
+          <span
+            class="clickable"
+            onclick="setModalCadastro()"
+            id="btnModalCadastro"
+          >
+            Não tenho uma conta
+          </span>
+        </div>
+      </div>
+    </div>
+    <div id="modalCadastro" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h1>Cadastre-se</h1>
+        <div class="input-area">
+          <p>Nome</p>
+          <input type="text" id="iptNome" />
+          <p>Email</p>
+          <input type="text" id="iptEmail" />
+          <p>Senha</p>
+          <input type="password" id="iptSenha" />
+          <p>Persona favorita</p>
+          <input
+            list="listaRespostas"
+            id="listaRespostasInput"
+            onchange="mudarImagem()"
+          />
+          <datalist id="listaRespostas"> </datalist>
+          <img src="" id="imgPersona" />
+        </div>
+        <div class="btn-area">
+          <button onclick="cadastrar()">Cadastrar-se</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    validarSessao();
+    setModalEntrar();
+
+    carregarPersonas();
+    let personas = [];
+    function carregarPersonas() {
+      fetch("/persona/listar")
+        .then((resposta) =>
+          resposta
+            .json()
+            .then((resposta) => {
+              personas = resposta;
+              listaRespostas = document.getElementById("listaRespostas");
+
+              for (let i = 0; i < personas.length; i++) {
+                let option = document.createElement("option");
+                option.value = personas[i].id;
+                option.innerHTML = personas[i].nome;
+                listaRespostas.appendChild(option);
+              }
+              mostrarPersona(personas);
+            })
+            .catch((error) => console.error(error))
+        )
+        .catch((error) => console.error(error));
+    }
+    function entrar() {
+      let email = document.getElementById("iptEmailLogin").value;
+      let senha = document.getElementById("iptSenhaLogin").value;
+
+      fetch("/usuarios/autenticar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailServer: email,
+          senhaServer: senha,
+        }),
+      })
+        .then((resultado) => {
+          resultado
+            .json()
+            .then((resultado) => {
+              console.log(resultado);
+              sessionStorage.ID_USUARIO = resultado[0].id;
+              sessionStorage.NOME_USUARIO = resultado[0].nome;
+              location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+    function cadastrar() {
+      let nome = document.getElementById("iptNome").value;
+      let email = document.getElementById("iptEmail").value;
+      let senha = document.getElementById("iptSenha").value;
+      let fkPersona = Number(document.getElementById("listaRespostasInput").value)
+
+      fetch("/usuarios/cadastrar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nomeServer: nome,
+          emailServer: email,
+          senhaServer: senha,
+          fkPersonaServer: fkPersona
+        }),
+      })
+        .then((resultado) => {
+          resultado
+            .json()
+            .then((resultado) => {
+              alert("Cadastro realizado com sucesso!");
+              console.log(resultado);
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+
+    function mudarImagem() {
+      let persona = document.getElementById("listaRespostasInput").value;
+      let imgPersona = document.getElementById("imgPersona");
+      for (let i = 0; i < personas.length; i++) {
+        if(personas[i].id == persona) {
+          imgPersona.src = personas[i].imagem;
+        }
+      }
+    }
+  </script>
+</html>

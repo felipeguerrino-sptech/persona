@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/jogo.css" />
+    <link
+      rel="shortcut icon"
+      href="assets/persona3-logo.png"
+      type="image/x-icon"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Adivinhe a Persona</title>
+  </head>
+  <body>
+    <a href="index.html" class="btnVoltar clickable"> < Voltar </a>
+    <div class="container">
+      <h1 id="saudacao"></h1>
+      <div class="banner">
+        <div class="card">
+          <img class="silhueta" id="personaImg" src="" alt="" />
+          <input list="listaRespostas" id="listaRespostasInput" />
+          <datalist id="listaRespostas"> </datalist>
+          <button onclick="verificarResposta()" id="btnVerificar">✓</button>
+          <button id="btnJogarNovamente" style="display: none">
+            Jogar Novamente
+          </button>
+        </div>
+        <div class="divPontos">
+          <h3>Pontos</h3>
+          <h2 id="pontos">0</h2>
+          <div class="graficoDiv">
+            <p>Personas Favoritos</p>
+            <canvas id="graficoPersona"></canvas>
+          </div>
+        </div>
+        <div id="tabela">
+          <h3>Ranking</h3>
+          <div class="tabela-header">
+            <p>Posição</p>
+            <p>Nome</p>
+            <p>Pontuação</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    carregarPersonas();
+    carregarPersonasFavoritos();
+    saudacao.innerHTML = `Quem é essa Persona, ${sessionStorage.NOME_USUARIO}?`;
+    let melhorPontuacao = 0;
+    let personas = [];
+    let personasFavoritosNome = [];
+    let personasFavoritosQtd = [];
+    let qtdPersonas = 0;
+    let idPersonaAtual = 0;
+    let pontuacaoAtual = 0;
+
+    selectPontuacao();
+    carregarRanking();
+
+    function jogarNovamente() {
+      location.reload();
+    }
+
+    function verificarResposta() {
+      let resposta = document.getElementById("listaRespostasInput").value;
+      let pontos = document.getElementById("pontos");
+      let personaImg = document.getElementById("personaImg");
+
+      if (pontuacaoAtual == qtdPersonas) {
+        personaImg.style.display = "none";
+        listaRespostasInput.style.display = "none";
+        btnVerificar.style.display = "none";
+
+        let card = document.getElementsByClassName("card")[0];
+        let msgVitoria = document.createElement("h3");
+        msgVitoria.id = "msgVitoria";
+        msgVitoria.innerHTML = `Parabéns, você ganhou com ${pontuacaoAtual} pontos!`;
+        card.appendChild(msgVitoria);
+        card.appendChild(btnJogarNovamente);
+        btnJogarNovamente.addEventListener("click", jogarNovamente());
+        btnJogarNovamente.style.display = "block";
+
+        salvarPontuacao();
+      } else if (resposta == personas[idPersonaAtual].nome) {
+        pontuacaoAtual++;
+        pontos.innerHTML = pontuacaoAtual;
+        personas.splice(idPersonaAtual, 1);
+        personaImg.className = "";
+        setTimeout(() => {
+          resposta.value = "";
+          mostrarPersona(personas);
+        }, 2000);
+      } else {
+        personaImg.style.display = "none";
+        listaRespostasInput.style.display = "none";
+        btnVerificar.style.display = "none";
+
+        let card = document.getElementsByClassName("card")[0];
+        let msgDerrota = document.createElement("h3");
+        msgDerrota.id = "msgDerrota";
+        msgDerrota.innerHTML = `Você perdeu com ${pontuacaoAtual} pontos!`;
+        card.appendChild(msgDerrota);
+        card.appendChild(btnJogarNovamente);
+        btnJogarNovamente.addEventListener("click", () =>
+          jogarNovamente(msgDerrota)
+        );
+        btnJogarNovamente.style.display = "block";
+
+        salvarPontuacao();
+      }
+    }
+    function mostrarPersona(personas) {
+      let n = Math.floor(Math.random() * personas.length);
+      let personaImg = document.getElementById("personaImg");
+      personaImg.className = "silhueta";
+      personaImg.src = personas[n].imagem;
+      idPersonaAtual = n;
+    }
+
+    function selectPontuacao() {
+      fetch(`/usuarios/selectPontuacao/${sessionStorage.ID_USUARIO}`)
+        .then((resultado) => {
+          resultado
+            .json()
+            .then((resultado) => {
+              if (resultado[0].pontuacao > 0) {
+                melhorPontuacao = resultado[0].pontuacao;
+              } else {
+                melhorPontuacao = 0;
+              }
+            })
+            .catch();
+        })
+        .catch();
+    }
+
+    function salvarPontuacao() {
+      let idUsuario = sessionStorage.ID_USUARIO;
+      let p = pontuacaoAtual;
+      pontuacaoAtual = 0;
+      pontos.innerHTML = 0;
+      if (melhorPontuacao == 0 && p > 0) {
+        fetch("/ranking/cadastrar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fkUsuario: idUsuario,
+            pontuacao: p,
+          }),
+        })
+          .then((resposta) => {
+            resposta
+              .json()
+              .then((resposta) => {
+                alert("Pontuação salva!");
+              })
+              .catch();
+          })
+          .catch();
+      } else if (melhorPontuacao < p) {
+        fetch(`/ranking/atualizar/${idUsuario}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pontuacao: p,
+          }),
+        })
+          .then((resposta) => {
+            resposta
+              .json()
+              .then((resposta) => {
+                alert("Pontuação salva!");
+              })
+              .catch();
+          })
+          .catch();
+      }
+    }
+    function carregarRanking() {
+      fetch("/ranking/listar")
+        .then((resposta) => {
+          resposta
+            .json()
+            .then((resposta) => {
+              let ranks = resposta;
+              ranks = ranks.sort((a, b) =>
+                a.pontuacao > b.pontuacao
+                  ? 1
+                  : b.pontuacao > a.pontuacao
+                  ? -1
+                  : 0
+              );
+              let tabela = document.getElementById("tabela");
+              for (let i = 0; i < ranks.length; i++) {
+                let rank = document.createElement("div");
+                let posicao = document.createElement("p");
+                let nome = document.createElement("p");
+                let pontuacao = document.createElement("p");
+
+                posicao.innerHTML = `${i + 1}°`;
+                nome.innerHTML = ranks[i].nome;
+                pontuacao.innerHTML = ranks[i].pontuacao;
+
+                rank.appendChild(posicao);
+                rank.appendChild(nome);
+                rank.appendChild(pontuacao);
+                rank.className = "tabela-content";
+                tabela.appendChild(rank);
+              }
+            })
+            .catch();
+        })
+        .catch();
+    }
+
+    function carregarPersonas() {
+      fetch("/persona/listar")
+        .then((resposta) =>
+          resposta
+            .json()
+            .then((resposta) => {
+              personas = resposta;
+              listaRespostas = document.getElementById("listaRespostas");
+
+              for (let i = 0; i < personas.length; i++) {
+                let option = document.createElement("option");
+                option.value = personas[i].nome;
+                option.innerHTML = personas[i].nome;
+                listaRespostas.appendChild(option);
+              }
+              qtdPersonas = personas.length;
+              mostrarPersona(personas);
+            })
+            .catch((error) => console.error(error))
+        )
+        .catch((error) => console.error(error));
+    }
+
+    function carregarPersonasFavoritos() {
+      fetch("/persona/favoritos")
+        .then((resposta) =>
+          resposta
+            .json()
+            .then((resposta) => {
+              let r = resposta;
+              for (let i = 0; i < r.length; i++) {
+                personasFavoritosNome.push(resposta[i].nome);
+                personasFavoritosQtd.push(resposta[i].personasFavoritos);
+              }
+              gerarGraficoPersona();
+            })
+            .catch()
+        )
+        .catch();
+    }
+
+    function gerarGraficoPersona() {
+      const dados = {
+        labels: personasFavoritosNome,
+        datasets: [
+          {
+            data: personasFavoritosQtd,
+            backgroundColor: ["purple", "pink", "blue", "yellow", "red"],
+          },
+        ],
+      };
+      const configGraficoPersona = {
+        type: "pie",
+        data: dados,
+        options: {
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        },
+      };
+      const graficoPersona = new Chart(
+        document.getElementById("graficoPersona"),
+        configGraficoPersona
+      );
+    }
+  </script>
+</html>

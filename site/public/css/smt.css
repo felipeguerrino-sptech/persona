@@ -1,0 +1,23 @@
+body {
+    background-color: #0F0428
+}
+
+h1 {
+    color: #D70C0B;
+    display: flex;
+    align-items: center;
+}
+
+img {
+    height: 500px;
+}
+
+.text-area {
+    justify-content: flex-start;
+}
+
+.titulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

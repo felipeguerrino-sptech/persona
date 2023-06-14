@@ -1,0 +1,120 @@
+.silhueta {
+    filter: contrast(0%) brightness(0%);
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: #D5E7F2;
+    align-items: center;
+    width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.card h3 {
+    font-family: 'pixel';
+    color: #3F61A6;
+}
+
+.banner {
+    margin: auto
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+}
+
+img {
+    width: 100%;
+    height: 300px;
+}
+
+#btnVerificar, #btnJogarNovamente {
+    background-color: #3F61A6;
+    color: #fff;
+    width: 10%;
+    font-size: xx-large;
+    border-style: none;
+    border-radius: 5px;
+}
+
+#btnJogarNovamente {
+    font-family: 'bitmap';
+    font-size: medium;
+    width: 50%;
+}
+
+input {
+    width: 50%;
+    margin: 10px;
+    font-family: 'bitmap';
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'pixel';
+    color: #FFF;
+}
+
+.container {
+    flex-direction: column;
+}
+
+.banner {
+    color: #fff;
+    flex-direction: row;
+}
+
+.divPontos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.graficoDiv {
+    width: 40%;
+}
+
+#tabela {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #D5E7F2;
+    color: #3F61A6;
+}
+
+#tabela p {
+    margin: 5px;
+}
+
+.tabela-header {
+    display: flex;
+    font-weight: bold;
+    border-top: solid 2px #32b9cd;
+    border-bottom: solid 2px #32b9cd;
+    justify-content: space-evenly;
+}
+
+.tabela-content {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.tabela-content p {
+    padding: 10px;
+}
