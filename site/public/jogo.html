@@ -192,12 +192,7 @@
             .json()
             .then((resposta) => {
               let ranks = resposta;
-              ranks = ranks.sort((a, b) =>
-                a.pontuacao > b.pontuacao
-                  ? 1
-                  : b.pontuacao > a.pontuacao
-                  ? -1
-                  : 0
+              ranks = ranks.sort((a, b) => a.pontuacao < b.pontuacao ? 1: b.pontuacao < a.pontuacao ? -1 : 0
               );
               let tabela = document.getElementById("tabela");
               for (let i = 0; i < ranks.length; i++) {
