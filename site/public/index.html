@@ -69,6 +69,15 @@
           membros da SEES conseguem invocar Personas, a manifestação do seu eu
           interior.
         </p>
+        <iframe
+          width="720"
+          height="480"
+          src="https://www.youtube.com/embed/QIIPXA2A6cM"
+          title="Persona 3 Reload — Announcement Trailer"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
         <div class="slide"></div>
       </div>
       <div class="text-area">
@@ -219,7 +228,9 @@
       let nome = document.getElementById("iptNome").value;
       let email = document.getElementById("iptEmail").value;
       let senha = document.getElementById("iptSenha").value;
-      let fkPersona = Number(document.getElementById("listaRespostasInput").value)
+      let fkPersona = Number(
+        document.getElementById("listaRespostasInput").value
+      );
 
       fetch("/usuarios/cadastrar", {
         method: "POST",
@@ -230,7 +241,7 @@
           nomeServer: nome,
           emailServer: email,
           senhaServer: senha,
-          fkPersonaServer: fkPersona
+          fkPersonaServer: fkPersona,
         }),
       })
         .then((resultado) => {
@@ -253,7 +264,7 @@
       let persona = document.getElementById("listaRespostasInput").value;
       let imgPersona = document.getElementById("imgPersona");
       for (let i = 0; i < personas.length; i++) {
-        if(personas[i].id == persona) {
+        if (personas[i].id == persona) {
           imgPersona.src = personas[i].imagem;
         }
       }
